@@ -35,13 +35,13 @@ For more information on Gum and its features, check out the official repository:
 Clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/GumScripts.git
-cd GumScripts
+git clone https://github.com/hosnizaaraoui/GumBash.git
+cd GumBash
 ```
 Run any of the Bash scripts in this repository. For example:
 
 ```bash
-./your_script_name.sh
+./01_hello_world.sh
 ```
 ### Author
 Hosni Zaaraoui
