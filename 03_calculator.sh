@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Source the main script to reuse defined functions and styles
-source easy.sh
+# Source the utility script containing UI helper functions
+source ui_tools.sh
 
 # Clear the terminal screen
 tput clear
@@ -17,30 +17,30 @@ x=$(gum input --placeholder "Enter the first number: ")
 y=$(gum input --placeholder "Enter the second number: ")
 
 # Define a prefix for the result message
-prefix="Result:" 
+prefix="Result:"
 
 # Perform the chosen operation and display the result
 case $operation in
-    "Addition")
-        banner "$prefix $(($x + $y))" 6
-        ;;
-    "Subtraction")
-        banner "$prefix $(($x - $y))" 6
-        ;;
-    "Multiplication")
-        banner "$prefix $(($x * $y))" 6
-        ;;
-    "Division")
-        # Check for division by zero
-        if [ "$y" -eq 0 ]; then
-            banner "Error: Division by zero is undefined!" 1
-        else
-            banner "$prefix $(($x / $y))" 6
-        fi
-        ;;
-    *)
-        # Handle unexpected input
-        banner "Error: Invalid operation selected!" 1
-        ;;
+"Addition")
+    banner "$prefix $(($x + $y))" 6
+    ;;
+"Subtraction")
+    banner "$prefix $(($x - $y))" 6
+    ;;
+"Multiplication")
+    banner "$prefix $(($x * $y))" 6
+    ;;
+"Division")
+    # Check for division by zero
+    if [ "$y" -eq 0 ]; then
+        banner "Error: Division by zero is undefined!" 1
+    else
+        banner "$prefix $(($x / $y))" 6
+    fi
+    ;;
+*)
+    # Handle unexpected input
+    banner "Error: Invalid operation selected!" 1
+    ;;
 esac
 # Script written by the author

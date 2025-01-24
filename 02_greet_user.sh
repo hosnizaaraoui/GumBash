@@ -1,8 +1,7 @@
-
 #!/bin/bash
 
-# Source the main script to reuse defined functions and styles
-source easy.sh
+# Source the utility script containing UI helper functions
+source ui_tools.sh
 
 # Clear the terminal screen
 tput clear

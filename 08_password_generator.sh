@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Source the easy.sh script to use the defined functions and styles
-source easy.sh
+# Source the utility script containing UI helper functions
+source ui_tools.sh
 
 tput clear
 banner "Password Generator:" 0

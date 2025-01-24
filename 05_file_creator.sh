@@ -1,8 +1,7 @@
-
 #!/bin/bash
 
-# Source the main script to reuse defined functions and styles
-source easy.sh
+# Source the utility script containing UI helper functions
+source ui_tools.sh
 
 # Clear the terminal screen
 tput clear
@@ -25,13 +24,13 @@ if [[ -e "$filename" ]]; then
 fi
 
 # Allow the user to write content into the specified file
-gum write --placeholder="Write something into it..." >> "$filename"
+gum write --placeholder="Write something into it..." >>"$filename"
 
 # Ask the user if they want to preview the file
 gum confirm "Would you preview your file?"
 if [[ $? -eq 0 ]]; then
     # Display the file content using a pager if the user confirms
-    gum pager < "$filename"
+    gum pager <"$filename"
 else
     # Exit the script if the user declines
     exit 0
