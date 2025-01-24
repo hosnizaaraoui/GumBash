@@ -7,29 +7,31 @@ NONE=$(tput sgr0)                # Reset text formatting
 BOLD=$(tput bold)                # Bold text
 
 # Get terminal dimensions
-cols=$(tput cols)   # Number of columns
-lines=$(tput lines) # Number of lines
+cols=$(tput cols)   # Number of columns in the terminal
+lines=$(tput lines) # Number of rows (lines) in the terminal
 
-# Calculate terminal center positions
-cols_mid=$(($cols / 2))   # Center column
-lines_mid=$(($lines / 2)) # Center row
+# Calculate the center of the terminal
+cols_mid=$(($cols / 2))   # Center column index
+lines_mid=$(($lines / 2)) # Center row index
 
+# Function to hide the cursor for cleaner display
 hidecursor() {
-    # Hide the cursor for better display
+    # Ensure the cursor is restored upon script exit
     trap "tput cnorm; exit" SIGINT SIGTERM
 
+    # Hide the cursor
     tput civis
 }
 
+# Function to restore the cursor when the script exits
 restorecursor() {
-    # Ensure the cursor is restored when the script exits
     trap "tput cnorm" EXIT
 }
 
 # Function to move the cursor to a specified row ($1) and column ($2)
 goto() {
     hidecursor
-    tput cup $1 $2
+    tput cup $1 $2 # Move the cursor to the specified position
     restorecursor
 }
 
@@ -41,7 +43,7 @@ loading() {
     title=$1
     delay=$2
 
-    # Use Gum to display a spinner with the given title and delay
+    # Display a spinner with the provided title and delay
     gum spin --spinner dot --title="$title" -- sleep $delay
 }
 
@@ -49,36 +51,46 @@ loading() {
 # Arguments:
 #   $1: Message to display
 #   $2: Color code for the message (e.g., 1 for RED)
+#   $3: (Optional) Width of the banner
 banner() {
     alert="$(tput setaf $2)$1$(tput sgr0)"
 
+    # Adjust the banner width if a third argument is provided
     if [[ $3 -ne 0 ]]; then
         cols=$3
     fi
-    # Use Gum to display the styled banner
+
+    # Display the styled banner with a rounded border
     gum style --bold --border rounded --width $(($cols - 2)) --height 1 "$alert"
 }
 
 # Function to get the current cursor position
 # Outputs the row and column coordinates
 get_cursor_coordinates() {
-    # Save current cursor position
-    echo -ne "\033[6n"              # ANSI escape code to request cursor position
-    IFS=';' read -sdR -p '' row col # Read the response into variables
-    row=${row#*[}                   # Extract the row number
+    # Request the current cursor position using an ANSI escape code
+    echo -ne "\033[6n"
+    # Parse the response to extract row and column values
+    IFS=';' read -sdR -p '' row col
+    row=${row#*[} # Remove unwanted characters to extract the row number
     echo "$row $col"
 }
 
-# Function to clear all lines from the top to the bottom
+# Function to clear all lines from a specified starting line to the bottom
+# Arguments:
+#   $1: Line number to start clearing from
 clearlines() {
-    local total_lines=$(tput lines) # Total number of lines in the terminal
-    total_lines=$((total_lines - $1))
-    goto $1 0 # Move cursor to the top-left corner
+    local total_lines=$(tput lines)   # Get the total number of lines in the terminal
+    total_lines=$((total_lines - $1)) # Adjust for the starting line
 
+    # Move the cursor to the starting line
+    goto $1 0
+
+    # Loop through the lines and clear them
     for ((i = 0; i < total_lines; i++)); do
         tput el   # Clear the current line
         tput cuu1 # Move the cursor up one line
     done
 
-    goto $1 0 # Reset cursor to the top-left corner
+    # Reset the cursor to the starting position
+    goto $1 0
 }
