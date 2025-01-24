@@ -14,9 +14,23 @@ lines=$(tput lines) # Number of lines
 cols_mid=$(($cols / 2))   # Center column
 lines_mid=$(($lines / 2)) # Center row
 
+hidecursor() {
+    # Hide the cursor for better display
+    trap "tput cnorm; exit" SIGINT SIGTERM
+
+    tput civis
+}
+
+restorecursor() {
+    # Ensure the cursor is restored when the script exits
+    trap "tput cnorm" EXIT
+}
+
 # Function to move the cursor to a specified row ($1) and column ($2)
 goto() {
+    hidecursor
     tput cup $1 $2
+    restorecursor
 }
 
 # Function to display a loading animation
@@ -55,14 +69,16 @@ get_cursor_coordinates() {
     echo "$row $col"
 }
 
-hidecursor() {
-    # Hide the cursor for better display
-    trap "tput cnorm; exit" SIGINT SIGTERM
+# Function to clear all lines from the top to the bottom
+clearlines() {
+    local total_lines=$(tput lines) # Total number of lines in the terminal
+    total_lines=$((total_lines - $1))
+    goto $1 0 # Move cursor to the top-left corner
 
-    tput civis
-}
+    for ((i = 0; i < total_lines; i++)); do
+        tput el   # Clear the current line
+        tput cuu1 # Move the cursor up one line
+    done
 
-restorecursor() {
-    # Ensure the cursor is restored when the script exits
-    trap "tput cnorm" EXIT
+    goto $1 0 # Reset cursor to the top-left corner
 }
