@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # Define text styles using `tput`
-RED=$(tput setaf 1 && tput bold)  # Red text with bold styling
+RED=$(tput setaf 1 && tput bold) # Red text with bold styling
 GREEN=$(tput setaf 2)            # Green text
 NONE=$(tput sgr0)                # Reset text formatting
 BOLD=$(tput bold)                # Bold text
 
 # Get terminal dimensions
-cols=$(tput cols)                # Number of columns
-lines=$(tput lines)              # Number of lines
+cols=$(tput cols)   # Number of columns
+lines=$(tput lines) # Number of lines
 
 # Calculate terminal center positions
-cols_mid=$(($cols / 2))          # Center column
-lines_mid=$(($lines / 2))        # Center row
+cols_mid=$(($cols / 2))   # Center column
+lines_mid=$(($lines / 2)) # Center row
 
 # Function to move the cursor to a specified row ($1) and column ($2)
 goto() {
@@ -37,7 +37,7 @@ loading() {
 #   $2: Color code for the message (e.g., 1 for RED)
 banner() {
     alert="$(tput setaf $2)$1$(tput sgr0)"
-    
+
     if [[ $3 -ne 0 ]]; then
         cols=$3
     fi
@@ -49,9 +49,20 @@ banner() {
 # Outputs the row and column coordinates
 get_cursor_coordinates() {
     # Save current cursor position
-    echo -ne "\033[6n"  # ANSI escape code to request cursor position
-    IFS=';' read -sdR -p '' row col  # Read the response into variables
+    echo -ne "\033[6n"              # ANSI escape code to request cursor position
+    IFS=';' read -sdR -p '' row col # Read the response into variables
     row=${row#*[}                   # Extract the row number
     echo "$row $col"
 }
 
+hidecursor() {
+    # Hide the cursor for better display
+    trap "tput cnorm; exit" SIGINT SIGTERM
+
+    tput civis
+}
+
+restorecursor() {
+    # Ensure the cursor is restored when the script exits
+    trap "tput cnorm" EXIT
+}
